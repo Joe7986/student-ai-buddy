@@ -1,0 +1,25 @@
+{
+  "overview": "Student AI Buddy is a conversational learning companion that helps students ask questions, receive step-by-step tutoring, take practice quizzes, track their progress, and discover knowledge gaps — all powered by an AI inference backend and a rule-based knowledge system.",
+  "features": [
+    "Conversational AI chat with natural language questions and step-by-step answers",
+    "Practice quizzes with instant feedback and adaptive difficulty",
+    "Progress dashboard showing mastered topics, weak areas, and study streaks",
+    "Knowledge gap detection and AI-powered study topic suggestions",
+    "Internet Identity login with persistent student profiles",
+    "Chat history with session summaries and topic search",
+    "Socratic method AI responses with hints and guided explanations",
+    "Mobile-first responsive design with light and dark modes"
+  ],
+  "category": "productivity",
+  "tags": [
+    "education",
+    "ai",
+    "tutoring",
+    "students",
+    "learning",
+    "quiz",
+    "progress",
+    "chat"
+  ],
+  "last_updated": "2026-04-14T10:50:32.283Z"
+}

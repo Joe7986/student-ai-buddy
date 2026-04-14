@@ -1,0 +1,216 @@
+type UserId = principal;
+type TopicProgress = 
+ record {
+   accuracyPercent: nat;
+   correctCount: nat;
+   lastUpdated: Timestamp;
+   masteryLevel: MasteryLevel;
+   topicId: TopicId;
+   totalAttempts: nat;
+   userId: UserId;
+ };
+type TopicInput = 
+ record {
+   description: text;
+   difficulty: DifficultyLevel;
+   id: TopicId;
+   name: text;
+   prerequisites: vec TopicId;
+   subject: text;
+ };
+type TopicId = text;
+type TopicFactInput = 
+ record {
+   factText: text;
+   tags: vec text;
+   topicId: TopicId;
+ };
+type TopicFact = 
+ record {
+   factText: text;
+   id: nat;
+   tags: vec text;
+   topicId: TopicId;
+ };
+type Topic = 
+ record {
+   createdAt: Timestamp;
+   description: text;
+   difficulty: DifficultyLevel;
+   facts: vec TopicFact;
+   id: TopicId;
+   name: text;
+   prerequisites: vec TopicId;
+   subject: text;
+ };
+type Timestamp = int;
+type SuggestedTopic = 
+ record {
+   reason: text;
+   topicId: TopicId;
+   topicName: text;
+ };
+type StudentProfilePublic = 
+ record {
+   createdAt: Timestamp;
+   gradeLevel: GradeLevel;
+   name: text;
+   preferredSubjects: vec text;
+   updatedAt: Timestamp;
+   userId: UserId;
+ };
+type StudentProfileInput = 
+ record {
+   gradeLevel: GradeLevel;
+   name: text;
+   preferredSubjects: vec text;
+ };
+type SessionSummaryInput = 
+ record {
+   durationSeconds: nat;
+   keyTakeaways: vec text;
+   sessionId: SessionId;
+   topic: text;
+ };
+type SessionSummary = 
+ record {
+   durationSeconds: nat;
+   keyTakeaways: vec text;
+   sessionId: SessionId;
+   timestamp: Timestamp;
+   topic: text;
+   userId: UserId;
+ };
+type SessionId = text;
+type SendMessageInput = 
+ record {
+   content: text;
+   sessionId: SessionId;
+ };
+type QuizSessionResult = 
+ record {
+   correctCount: nat;
+   quizId: QuizId;
+   score: nat;
+   sessionId: SessionId;
+   timestamp: Timestamp;
+   totalQuestions: nat;
+   userId: UserId;
+ };
+type QuizQuestionInput = 
+ record {
+   choices: vec text;
+   correctAnswer: text;
+   explanation: text;
+   questionText: text;
+   questionType: QuestionType;
+   quizId: QuizId;
+   topicId: TopicId;
+ };
+type QuizQuestion = 
+ record {
+   choices: vec text;
+   correctAnswer: text;
+   explanation: text;
+   id: nat;
+   questionText: text;
+   questionType: QuestionType;
+   quizId: QuizId;
+   topicId: TopicId;
+ };
+type QuizId = text;
+type QuizAttemptInput = 
+ record {
+   questionId: nat;
+   quizId: QuizId;
+   sessionId: SessionId;
+   studentAnswer: text;
+ };
+type QuizAttempt = 
+ record {
+   id: nat;
+   isCorrect: bool;
+   questionId: nat;
+   quizId: QuizId;
+   score: nat;
+   sessionId: SessionId;
+   studentAnswer: text;
+   timestamp: Timestamp;
+   userId: UserId;
+ };
+type QuestionType = 
+ variant {
+   multipleChoice;
+   shortAnswer;
+ };
+type MessageRole = 
+ variant {
+   ai;
+   student;
+ };
+type MessageFeedback = 
+ variant {
+   none;
+   thumbsDown;
+   thumbsUp;
+ };
+type MasteryLevel = 
+ variant {
+   inProgress;
+   mastered;
+   needsWork;
+ };
+type GradeLevel = 
+ variant {
+   college;
+   elementary;
+   highSchool;
+   middleSchool;
+   other;
+ };
+type DifficultyLevel = 
+ variant {
+   advanced;
+   beginner;
+   intermediate;
+ };
+type ChatMessage = 
+ record {
+   content: text;
+   feedback: MessageFeedback;
+   id: nat;
+   role: MessageRole;
+   sessionId: SessionId;
+   timestamp: Timestamp;
+   userId: UserId;
+ };
+service : {
+  addQuizQuestion: (input: QuizQuestionInput) -> (QuizQuestion);
+  addTopic: (input: TopicInput) -> (Topic);
+  addTopicFact: (input: TopicFactInput) -> (TopicFact);
+  getAllMyProgress: () -> (vec TopicProgress) query;
+  getCallerUserProfile: () -> (opt StudentProfilePublic) query;
+  getChatSessionHistory: () -> (vec SessionId) query;
+  getMyQuizAttempts: () -> (vec QuizAttempt) query;
+  getMyTopicProgress: (topicId: TopicId) -> (opt TopicProgress) query;
+  getPrerequisiteTopics: (topicId: TopicId) -> (vec Topic) query;
+  getQuizQuestion: (quizId: QuizId, questionId: nat) ->
+   (opt QuizQuestion) query;
+  getQuizQuestions: (quizId: QuizId) -> (vec QuizQuestion) query;
+  getQuizSessionResult: (sessionId: SessionId, quizId: QuizId) ->
+   (QuizSessionResult) query;
+  getSessionMessages: (sessionId: SessionId) -> (vec ChatMessage) query;
+  getSessionSummary: (sessionId: SessionId) -> (opt SessionSummary) query;
+  getSuggestedTopics: () -> (vec SuggestedTopic) query;
+  getTopic: (topicId: TopicId) -> (opt Topic) query;
+  getTopicsBySubject: (subject: text) -> (vec Topic) query;
+  getUserProfile: (userId: UserId) -> (opt StudentProfilePublic) query;
+  getUserSessionSummaries: () -> (vec SessionSummary) query;
+  listTopics: () -> (vec Topic) query;
+  recordTopicAttempt: (topicId: TopicId, isCorrect: bool) -> (TopicProgress);
+  saveCallerUserProfile: (input: StudentProfileInput) -> ();
+  saveSessionSummary: (input: SessionSummaryInput) -> (SessionSummary);
+  sendMessage: (input: SendMessageInput) -> (ChatMessage);
+  setMessageFeedback: (messageId: nat, feedback: MessageFeedback) -> (bool);
+  submitQuizAnswer: (input: QuizAttemptInput) -> (QuizAttempt);
+}

@@ -1,0 +1,192 @@
+// Version: 1.0.0
+type ChatMessage__559859432 =
+  {
+    content : Text;
+    feedback : MessageFeedback__988370307;
+    id : Nat;
+    role : MessageRole__512297421;
+    sessionId : SessionId__1052913375;
+    timestamp : Timestamp__753029554;
+    userId : UserId__1023572875
+  };
+type Data__791452850<K, V> =
+  {var count : Nat__490723111; kvs : [var ?(K, V)]};
+type DifficultyLevel__692418023 = {#advanced; #beginner; #intermediate};
+type GradeLevel__1065798014 =
+  {#college; #elementary; #highSchool; #middleSchool; #other};
+type HttpArgs__157654646 =
+  {
+    body : ?Blob;
+    headers : [HttpHeader__198559345];
+    is_replicated : ?Bool;
+    max_response_bytes : ?Nat64;
+    method : {#get; #head; #post};
+    transform :
+      ?{
+         context : Blob;
+         function :
+           shared query {context : Blob; response : HttpResult__279536820} ->
+             async HttpResult__279536820
+       };
+    url : Text
+  };
+type HttpHeader__198559345 = {name : Text; value : Text};
+type HttpResult__279536820 =
+  {body : Blob; headers : [HttpHeader__198559345]; status : Nat};
+type Internal__8484328<K, V> =
+  {children : [var ?Node__46230540<K, V>]; data : Data__791452850<K, V>};
+type Leaf__809889148<K, V> = {data : Data__791452850<K, V>};
+type List__415060402<T> = List__790383201<T>;
+type List__790383201<T> =
+  {
+    var blockIndex : Nat__490723111;
+    var blocks : [var [var ?T]];
+    var elementIndex : Nat__490723111
+  };
+type Map__158565046<K, V> = Map__297112838<K, V>;
+type Map__297112838<K, V> =
+  {var root : Node__46230540<K, V>; var size : Nat__490723111};
+type Map__605269027<K, V> = Map__158565046<K, V>;
+type MasteryLevel__31604564 = {#inProgress; #mastered; #needsWork};
+type MessageFeedback__988370307 = {#none; #thumbsDown; #thumbsUp};
+type MessageRole__512297421 = {#ai; #student};
+type Nat__490723111 = Nat__920180692;
+type Nat__920180692 = Nat;
+type Node__46230540<K, V> =
+  {#internal : Internal__8484328<K, V>; #leaf : Leaf__809889148<K, V>};
+type QuestionType__952237516 = {#multipleChoice; #shortAnswer};
+type QuizAttempt__529564763 =
+  {
+    id : Nat;
+    isCorrect : Bool;
+    questionId : Nat;
+    quizId : QuizId__432224925;
+    score : Nat;
+    sessionId : SessionId__1052913375;
+    studentAnswer : Text;
+    timestamp : Timestamp__787673400;
+    userId : UserId__363132630
+  };
+type QuizId__432224925 = QuizId__438791917;
+type QuizId__438791917 = Text;
+type QuizQuestion__692474474 =
+  {
+    choices : [Text];
+    correctAnswer : Text;
+    explanation : Text;
+    id : Nat;
+    questionText : Text;
+    questionType : QuestionType__952237516;
+    quizId : QuizId__432224925;
+    topicId : TopicId__331436594
+  };
+type SessionId__1052913375 = Text;
+type SessionSummary__512307969 =
+  {
+    durationSeconds : Nat;
+    keyTakeaways : [Text];
+    sessionId : SessionId__1052913375;
+    timestamp : Timestamp__753029554;
+    topic : Text;
+    userId : UserId__1023572875
+  };
+type StudentProfile__499678722 =
+  {
+    createdAt : Timestamp__144199673;
+    gradeLevel : GradeLevel__1065798014;
+    name : Text;
+    preferredSubjects : [Text];
+    updatedAt : Timestamp__144199673;
+    userId : UserId__914439993
+  };
+type Timestamp__144199673 = Timestamp__301639476;
+type Timestamp__301639476 = Int;
+type Timestamp__753029554 = Timestamp__301639476;
+type Timestamp__787373227 = Timestamp__301639476;
+type Timestamp__787673400 = Timestamp__301639476;
+type TopicFact__74803489 =
+  {factText : Text; id : Nat; tags : [Text]; topicId : TopicId__784027927};
+type TopicId__331436594 = TopicId__858377695;
+type TopicId__784027927 = TopicId__858377695;
+type TopicId__858377695 = Text;
+type TopicProgress__688131376 =
+  {
+    accuracyPercent : Nat;
+    correctCount : Nat;
+    lastUpdated : Timestamp__787373227;
+    masteryLevel : MasteryLevel__31604564;
+    topicId : TopicId__784027927;
+    totalAttempts : Nat;
+    userId : UserId__158757552
+  };
+type Topic__117446350 =
+  {
+    createdAt : Timestamp__787373227;
+    description : Text;
+    difficulty : DifficultyLevel__692418023;
+    facts : [TopicFact__74803489];
+    id : TopicId__784027927;
+    name : Text;
+    prerequisites : [TopicId__784027927];
+    subject : Text
+  };
+type UserId__1023572875 = UserId__158757552;
+type UserId__158757552 = Principal;
+type UserId__363132630 = UserId__158757552;
+type UserId__914439993 = UserId__158757552;
+actor {
+  stable attemptIdCounter : [var Nat];
+  stable attemptStore :
+    {
+      var root :
+        Node__46230540<UserId__158757552,
+                        List__415060402<QuizAttempt__529564763>>;
+      var size : Nat__490723111
+    };
+  stable factIdCounter : [var Nat];
+  stable ic :
+    actor {
+      http_request :
+        shared HttpArgs__157654646 -> async HttpResult__279536820
+    };
+  stable messageIdCounter : [var Nat];
+  stable messageStore :
+    {
+      var root :
+        Node__46230540<UserId__158757552,
+                        List__415060402<ChatMessage__559859432>>;
+      var size : Nat__490723111
+    };
+  stable profileStore :
+    {
+      var root : Node__46230540<UserId__158757552, StudentProfile__499678722>;
+      var size : Nat__490723111
+    };
+  stable progressStore :
+    {
+      var root :
+        Node__46230540<UserId__158757552,
+                        Map__605269027<TopicId__858377695,
+                                        TopicProgress__688131376>>;
+      var size : Nat__490723111
+    };
+  stable questionIdCounter : [var Nat];
+  stable questionStore :
+    {
+      var root :
+        Node__46230540<QuizId__438791917,
+                        List__415060402<QuizQuestion__692474474>>;
+      var size : Nat__490723111
+    };
+  stable summaryStore :
+    {
+      var root :
+        Node__46230540<SessionId__1052913375, SessionSummary__512307969>;
+      var size : Nat__490723111
+    };
+  stable topicStore :
+    {
+      var root : Node__46230540<TopicId__858377695, Topic__117446350>;
+      var size : Nat__490723111
+    }
+};
